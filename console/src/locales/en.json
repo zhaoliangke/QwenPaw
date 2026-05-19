@@ -1819,8 +1819,10 @@
     "changelog": "Changelog",
     "docs": "Doc",
     "tutorial": "Tutorial",
+    "featureDemos": "Feature Demos",
     "faq": "FAQ",
     "github": "GitHub",
+    "resources": "Documentation",
     "updateAvailable": "Update Available"
   },
   "theme": {
