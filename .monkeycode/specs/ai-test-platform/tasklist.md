@@ -1,42 +1,42 @@
 # 需求实施计划
 
-- [ ] 1. 设置项目结构和核心接口
+- [x] 1. 设置项目结构和核心接口
   - 创建 `src/qwenpaw/test_extend/` 完整目录结构（agents/, mcp_tools/, routers/, storage/, models/, common/）
   - 创建 `console/src/pages/test/` 前端页面目录结构和注册入口
   - 创建 `plugin.json` 和 `plugin.py` Bundle 插件骨架
   - 定义 `requirements.md` 中 R-0.1 至 R-0.3 的核心约束接口边界
   - _需求: R-0.1, R-0.2, R-0.3_
 
-  - [ ] 1.1 创建后端扩展目录骨架
+  - [x] 1.1 创建后端扩展目录骨架
     - 在 `src/qwenpaw/test_extend/` 下创建 `__init__.py`、`plugin.py`、`plugin.json`
     - 创建 `agents/`、`mcp_tools/`、`routers/`、`storage/`、`models/`、`common/` 各子包 `__init__.py`
     - _需求: R-0.1 (所有测试业务代码置于 test_extend 目录)_
 
-  - [ ] 1.2 创建前端页面目录骨架
+  - [x] 1.2 创建前端页面目录骨架
     - 创建 `console/src/pages/test/` 目录
     - 创建 `register.ts` 实现 `registerTestRoutes()` 函数，调用 `routeRegistry.add()` 注册 7 个 `/test/*` 路由
     - 创建 `menu.ts` 定义 `TEST_MENU_ITEMS` 侧边栏菜单数据
     - _需求: R-0.1, R-10 (新增 /test/* 路由页面)_
 
-  - [ ] 1.3 实现插件注册入口 (TestPlatformPlugin)
+  - [x] 1.3 实现插件注册入口 (TestPlatformPlugin)
     - 编写 `plugin.py` 中 `TestPlatformPlugin.register(api)` 方法
     - 在 `register()` 中调用 `api.register_http_router()` 挂载 `/api/test` 前缀路由
     - 调用 `api.register_startup_hook()` 注册启动钩子
     - 调用 `api.register_shutdown_hook()` 注册关闭钩子
     - _需求: R-0.1, R-11_
 
-  - [ ] 1.4 实现存储路径管理模块
+  - [x] 1.4 实现存储路径管理模块
     - 编写 `storage/paths.py`，实现 `get_test_root()`、`get_iteration_dir()`、`get_prd_dir()` 等路径工具函数
     - 所有路径基于 `workspace_dir / "test"` 前缀，按迭代 ID 隔离
     - _需求: R-0.2_
 
-  - [ ] 1.5 实现基础数据模型
+  - [x] 1.5 实现基础数据模型
     - 编写 `models/iteration.py`：`Iteration`, `IterationStatus`
     - 编写 `models/traceability.py`：`TraceRecord`
     - 编写 `common/trace_id.py`：全链路追溯 ID 生成器
     - _需求: R-1, R-3 (追溯 ID 生成)_
 
-  - [ ] 1.6 创建前端布局与路由框架
+  - [x] 1.6 创建前端布局与路由框架
     - 创建 7 个页面组件的占位文件（`iteration/index.tsx` 等），每个导出 lazy import 组件
     - 在 `register.ts` 中使用 `lazy()` 动态导入所有页面组件
     - 确保 `MainLayout` 的 `Routes` 能正确渲染 `/test/*` 路径

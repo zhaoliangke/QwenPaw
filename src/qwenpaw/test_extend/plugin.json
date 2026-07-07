@@ -1,0 +1,22 @@
+{
+  "id": "test-platform",
+  "name": {
+    "en-US": "AI Test Platform",
+    "zh-CN": "AI 测试工作台"
+  },
+  "description": {
+    "en-US": "AI-powered end-to-end testing platform with iteration management, PRD parsing, story decomposition, test case generation, UI automation, report generation, defect sync, and knowledge base archiving.",
+    "zh-CN": "基于 AI 的端到端测试平台，覆盖迭代管理、需求解析、Story 拆解、测试用例生成、UI 自动化、报告生成、缺陷同步和知识库归档。"
+  },
+  "version": "0.1.0",
+  "type": "general",
+  "entry": {
+    "frontend": "ui/dist/test-platform.js",
+    "backend": "plugin.py"
+  },
+  "qwenpaw_version": {
+    "min": "2.0.0"
+  },
+  "author": "QwenPaw Test Platform Team",
+  "tags": ["testing", "automation", "qa"]
+}
