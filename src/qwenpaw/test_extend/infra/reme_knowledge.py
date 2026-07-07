@@ -239,27 +239,87 @@ async def search_test_knowledge(
 def _parse_search_results(text: str) -> list[dict]:
     """Parse ReMe search job output into structured results.
 
-    The ReMe search job returns formatted text. We attempt to extract
-    structured information from it.
+    ReMe search output format varies by version. We try multiple
+    parsing strategies to extract structured fields:
+    1. JSON-per-line format (newer ReMe versions)
+    2. Markdown list with file paths (older versions)
+    3. Raw text split by paragraph blocks
     """
     if not text:
         return []
 
+    import re
+
     results = []
+
+    # Strategy 1: JSON lines (newer ReMe)
+    for line in text.split("\n"):
+        line = line.strip()
+        if line.startswith("{") and line.endswith("}"):
+            try:
+                obj = json.loads(line)
+                results.append({
+                    "content": obj.get("content", obj.get("text", "")),
+                    "file_path": obj.get("file_path", obj.get("source", "")),
+                    "title": obj.get("title", obj.get("name", "")),
+                    "doc_type": obj.get("doc_type", ""),
+                    "product_line": obj.get("product_line", ""),
+                    "tags": obj.get("tags", []),
+                    "score": float(obj.get("score", obj.get("relevance", 0.5))),
+                })
+            except (json.JSONDecodeError, ValueError):
+                pass
+
+    if results:
+        return sorted(results, key=lambda x: x["score"], reverse=True)
+
+    # Strategy 2: Markdown bullet with file path patterns
+    file_pattern = re.compile(r'[`*]?(.+?\.(?:md|json|txt|yml|yaml))[`*]?', re.IGNORECASE)
+    score_pattern = re.compile(r'(?:score|relevance|rank)[:\s]*([0-9.]+)', re.IGNORECASE)
+
+    blocks = text.split("\n\n")
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+
+        file_match = file_pattern.search(block)
+        score_match = score_pattern.search(block)
+
+        lines = block.split("\n")
+        content = lines[-1].strip() if len(lines) > 1 else block[:500]
+        score = float(score_match.group(1)) if score_match else 0.4
+
+        results.append({
+            "content": content,
+            "file_path": file_match.group(1) if file_match else "",
+            "title": file_match.group(1).split("/")[-1] if file_match else "",
+            "doc_type": "",
+            "product_line": "",
+            "tags": [],
+            "score": min(score, 1.0),
+        })
+
+    if results:
+        return sorted(results, key=lambda x: x["score"], reverse=True)
+
+    # Strategy 3: Raw text split by newlines
     for line in text.split("\n"):
         line = line.strip()
         if not line:
             continue
-        results.append({
-            "content": line,
-            "file_path": "",
-            "title": "",
-            "doc_type": "",
-            "product_line": "",
-            "tags": [],
-            "score": 0.0,
-        })
-    return results
+        if len(line) > 20:
+            results.append({
+                "content": line[:1000],
+                "file_path": "",
+                "title": "",
+                "doc_type": "",
+                "product_line": "",
+                "tags": [],
+                "score": 0.3,
+            })
+
+    return results[:50]
 
 
 async def rebuild_knowledge_index():
