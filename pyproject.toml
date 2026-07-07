@@ -122,8 +122,13 @@ local = [
 whisper = [
     "openai-whisper>=20231117",
 ]
+test-platform = [
+    "sqlalchemy[asyncio]>=2.0.0",
+    "aiomysql>=0.2.0",
+    "redis>=5.0.0",
+]
 full = [
-    "qwenpaw[local,whisper]",
+    "qwenpaw[local,whisper,test-platform]",
 ]
 sip = [
     "pyVoIP>=1.6.0",

@@ -32,7 +32,7 @@ class TestCaseResult(BaseModel):
 class TestRun(BaseModel):
     """A test execution run containing multiple case results."""
 
-    id: str = Field(description="Unique test run identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique test run identifier")
     iteration_id: str = Field(description="Parent iteration ID")
     case_ids: list[str] = Field(description="Test case IDs included in this run")
     environment: str = Field(default="test", description="Target environment")

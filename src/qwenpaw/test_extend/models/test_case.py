@@ -21,7 +21,7 @@ class CaseType(str, Enum):
 class TestCase(BaseModel):
     """A test case generated from a user story."""
 
-    id: str = Field(description="Unique test case identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique test case identifier")
     story_id: str = Field(description="Parent story ID")
     iteration_id: str = Field(description="Parent iteration ID")
     title: str = Field(description="Test case title")

@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 class TraceRecord(BaseModel):
     """Links requirements, stories, cases, and defects across the pipeline."""
 
-    id: str = Field(description="Unique trace record identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique trace record identifier")
     iteration_id: str = Field(description="Parent iteration ID")
     story_ids: list[str] = Field(default_factory=list, description="Related story IDs")
     case_ids: list[str] = Field(default_factory=list, description="Related test case IDs")

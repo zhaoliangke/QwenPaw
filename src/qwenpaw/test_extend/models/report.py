@@ -28,7 +28,7 @@ class FailureItem(BaseModel):
 class TestReport(BaseModel):
     """A test report aggregating results from a test run."""
 
-    id: str = Field(description="Unique report identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique report identifier")
     test_run_id: str = Field(description="Source test run ID")
     iteration_id: str = Field(description="Parent iteration ID")
     total_cases: int = Field(default=0)

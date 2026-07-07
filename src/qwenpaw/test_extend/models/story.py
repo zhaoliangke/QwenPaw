@@ -17,7 +17,7 @@ class AcceptanceCriteria(BaseModel):
 class Story(BaseModel):
     """A user story decomposed from a PRD requirement."""
 
-    id: str = Field(description="Unique story identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique story identifier")
     iteration_id: str = Field(description="Parent iteration ID")
     parent_story_id: Optional[str] = Field(default=None, description="Parent story for hierarchical structure")
     title: str = Field(description="Story title")

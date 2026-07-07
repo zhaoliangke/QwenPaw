@@ -21,7 +21,7 @@ class IterationStatus(str, Enum):
 class Iteration(BaseModel):
     """A testing iteration that groups requirements, stories, cases, and runs."""
 
-    id: str = Field(description="Unique iteration identifier")
+    id: str = Field(default_factory=lambda: "", description="Unique iteration identifier")
     name: str = Field(description="Human-readable iteration name")
     version: str = Field(description="Software version number")
     module: str = Field(description="Module or component name")
