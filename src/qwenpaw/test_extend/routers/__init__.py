@@ -23,6 +23,7 @@ def create_test_router() -> APIRouter:
     from .test_exec import router as exec_router
     from .report_center import router as report_router
     from .knowledge_lib import router as knowledge_router
+    from .defect_sync import router as defect_router
 
     router.include_router(iteration_router, prefix="/iteration", tags=["Test Platform - Iteration"])
     router.include_router(prd_router, prefix="/prd", tags=["Test Platform - PRD"])
@@ -31,14 +32,12 @@ def create_test_router() -> APIRouter:
     router.include_router(exec_router, prefix="/exec", tags=["Test Platform - Execution"])
     router.include_router(report_router, prefix="/report", tags=["Test Platform - Report"])
     router.include_router(knowledge_router, prefix="/knowledge", tags=["Test Platform - Knowledge"])
-
-    # Story routes are mounted under /prd prefix for consistency
-    router.include_router(prd_router, prefix="", tags=["Test Platform - Story"])
+    router.include_router(defect_router, prefix="/defect", tags=["Test Platform - Defect"])
 
     @router.get("/health")
     async def test_platform_health():
         return {"status": "ok", "platform": "ai-test-platform", "modules": [
-            "iteration", "prd", "story", "case", "ui-auto", "exec", "report", "knowledge"
+            "iteration", "prd", "story", "case", "ui-auto", "exec", "report", "knowledge", "defect"
         ]}
 
     return router

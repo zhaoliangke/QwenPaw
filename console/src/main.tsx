@@ -9,6 +9,7 @@ import { registerBuiltinCards } from "./components/Chat/ToolCards/registerBuilti
 // menuRegistry / routeRegistry so consumers' first render sees them.
 import "./layouts/registry/builtinMenu";
 import "./layouts/registry/builtinRoutes.tsx";
+import "./pages/test/register";
 
 // Expose host dependencies (React, antd, etc.) on window
 // so that plugin UI modules can use them without bundling their own copies.

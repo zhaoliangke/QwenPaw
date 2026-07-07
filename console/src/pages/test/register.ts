@@ -55,5 +55,9 @@ export const TEST_ROUTES = [
 ];
 
 export function registerTestRoutes(): void {
-  routeRegistry.add("test-platform", TEST_ROUTES);
+  for (const route of TEST_ROUTES) {
+    routeRegistry.add("test-platform", route);
+  }
 }
+
+registerTestRoutes();
