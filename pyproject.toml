@@ -68,6 +68,9 @@ dependencies = [
     # Pure-Python wrapper around a prebuilt Rust binary; PyPI distributes
     # wheels for all three OSes.
     "ast-grep-cli>=0.20",
+    "pypdf>=4.0.0",
+    "python-docx>=1.1.0",
+    "beautifulsoup4>=4.12.0",
 ]
 
 [tool.setuptools.dynamic]

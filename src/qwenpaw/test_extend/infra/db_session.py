@@ -6,7 +6,7 @@ Session lifecycle is managed via async context manager.
 """
 
 import logging
-from typing import TYPE_CHECKING, AsyncGenerator
+from typing import TYPE_CHECKING, Optional
 
 try:
     from sqlalchemy.ext.asyncio import (
@@ -29,11 +29,6 @@ _session_factory = None
 
 
 async def init_mysql():
-    """Initialize the MySQL engine and create all tables.
-
-    Safe to call even if MySQL is not configured; it will be a no-op
-    when the backend is 'file'.
-    """
     global _engine, _session_factory
     cfg = get_db_config()
     if not cfg.is_mysql:
@@ -59,7 +54,6 @@ async def init_mysql():
 
 
 async def close_mysql():
-    """Dispose the MySQL engine and release all connections."""
     global _engine, _session_factory
     if _engine:
         await _engine.dispose()
@@ -68,24 +62,69 @@ async def close_mysql():
         logger.info("MySQL engine disposed")
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    """Yield an async database session.
+class _DbSession:
+    """Async context manager wrapping an AsyncSession.
 
-    For file backend, yields None; callers should fall back to file operations.
+    Supports both `async with` and `async for` patterns for compatibility.
     """
-    if _session_factory is None:
-        yield None
-        return
 
-    async with _session_factory() as session:
-        try:
-            yield session
-        except Exception:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
+    def __init__(self):
+        global _session_factory
+        self._session: Optional[AsyncSession] = None
+        if _session_factory is not None:
+            self._session = _session_factory()
+
+    def __aiter__(self):
+        return self._AsyncIter(self._session)
+
+    class _AsyncIter:
+        def __init__(self, session):
+            self._session = session
+            self._done = False
+
+        async def __anext__(self):
+            if self._done:
+                raise StopAsyncIteration
+            self._done = True
+            if self._session is None:
+                global _session_factory
+                if _session_factory is None:
+                    from .db_config import get_db_config
+                    if get_db_config().is_mysql:
+                        await init_mysql()
+                        if _session_factory is not None:
+                            self._session = _session_factory()
+            return self._session
+
+    async def __aenter__(self):
+        global _session_factory
+        if self._session is None and _session_factory is None:
+            from .db_config import get_db_config
+            if get_db_config().is_mysql:
+                await init_mysql()
+                if _session_factory is not None:
+                    self._session = _session_factory()
+        return self._session
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self._session is None:
+            return
+        if exc_type is not None:
+            await self._session.rollback()
+        await self._session.close()
+
+
+def get_db_session() -> _DbSession:
+    return _DbSession()
+
+
+def get_session_factory():
+    global _session_factory
+    return _session_factory
 
 
 def is_mysql_available() -> bool:
+    global _session_factory
     return _session_factory is not None
+
+__all__ = ["init_mysql", "close_mysql", "get_db_session", "is_mysql_available", "get_session_factory"]

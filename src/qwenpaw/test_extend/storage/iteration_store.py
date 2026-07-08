@@ -8,9 +8,9 @@ Reuses the platform's native file I/O utilities.
 import logging
 from pathlib import Path
 
-from ..common.utils import read_json_file, write_json_file, list_json_files
-from ..models.iteration import Iteration, IterationStatus
-from ..common.trace_id import generate_iteration_id
+from common.utils import read_json_file, write_json_file, list_json_files
+from models.iteration import Iteration, IterationStatus
+from common.trace_id import generate_iteration_id
 from .paths import get_iteration_dir, get_story_dir, get_case_dir, get_script_dir, get_exec_log_dir, get_report_dir
 
 logger = logging.getLogger(__name__)

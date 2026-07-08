@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @router.post("/run")
 async def run_batch(body: dict):
-    from ..mcp_tools.test_scheduler import run_batch_tool
+    from mcp_tools.test_scheduler import run_batch_tool
     return await run_batch_tool(
         case_ids=body["case_ids"],
         iteration_id=body["iteration_id"],
@@ -23,7 +23,7 @@ async def run_batch(body: dict):
 
 @router.post("/run-single")
 async def run_single(body: dict):
-    from ..mcp_tools.test_scheduler import run_single_tool
+    from mcp_tools.test_scheduler import run_single_tool
     return await run_single_tool(
         case_id=body["case_id"],
         environment=body.get("environment", "test"),
@@ -33,7 +33,7 @@ async def run_single(body: dict):
 
 @router.get("/progress/{run_id}")
 async def get_progress(run_id: str):
-    from ..mcp_tools.test_scheduler import get_progress_tool
+    from mcp_tools.test_scheduler import get_progress_tool
     return await get_progress_tool(run_id)
 
 
@@ -47,7 +47,7 @@ async def websocket_progress(websocket: WebSocket, run_id: str):
     await websocket.accept()
     logger.info("WebSocket connected for run %s", run_id)
 
-    from ..mcp_tools.test_scheduler import _get_agent
+    from mcp_tools.test_scheduler import _get_agent
 
     agent = _get_agent()
 
@@ -65,7 +65,7 @@ async def websocket_progress(websocket: WebSocket, run_id: str):
 
     try:
         # Send initial progress
-        from ..mcp_tools.test_scheduler import get_progress_tool
+        from mcp_tools.test_scheduler import get_progress_tool
         initial = await get_progress_tool(run_id)
         await websocket.send_json(initial)
 
@@ -94,7 +94,7 @@ async def websocket_progress(websocket: WebSocket, run_id: str):
 
 @router.get("/history")
 async def get_history(iteration_id: str):
-    from ..storage.paths import get_exec_log_dir
+    from storage.paths import get_exec_log_dir
     from qwenpaw.constant import WORKING_DIR
     log_dir = get_exec_log_dir(WORKING_DIR, iteration_id)
     runs = []

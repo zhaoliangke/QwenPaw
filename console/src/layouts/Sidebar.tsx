@@ -74,6 +74,13 @@ const SIMPLE_MODE_WHITELIST = new Set([
   "core.cron-jobs",
   "core.agent-config",
   "core.models",
+  "test.iteration",
+  "test.prd_analysis",
+  "test.case_manage",
+  "test.ui_auto",
+  "test.test_exec",
+  "test.report_center",
+  "test.knowledge_lib",
 ]);
 
 /**

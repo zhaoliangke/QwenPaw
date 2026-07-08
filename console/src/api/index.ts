@@ -28,6 +28,10 @@ import { languageApi } from "./modules/language";
 import { backupApi } from "./modules/backup";
 import { consoleApi } from "./modules/console";
 import { accessControlApi } from "./modules/accessControl";
+import { workflowApi } from "./modules/workflow";
+import { projectApi } from "./modules/testProject";
+import { uiAutoApi } from "./modules/testUiAuto";
+import { elementMapApi } from "./modules/testElementMap";
 
 export const api = {
   // Root
@@ -99,6 +103,14 @@ export const api = {
 
   // Access Control
   ...accessControlApi,
+
+  // Workflow
+  ...workflowApi,
+
+  // Test Project & Case Save
+  ...projectApi,
+  ...uiAutoApi,
+  ...elementMapApi,
 };
 
 export default api;

@@ -11,7 +11,7 @@ _agent = None
 def _get_agent():
     global _agent
     if _agent is None:
-        from ...agents.case_gen_agent import CaseGenAgent
+        from agents.case_gen_agent import CaseGenAgent
         from qwenpaw.constant import WORKING_DIR
         _agent = CaseGenAgent(WORKING_DIR)
     return _agent

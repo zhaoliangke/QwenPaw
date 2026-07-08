@@ -11,7 +11,7 @@ _agent = None
 def _get_agent():
     global _agent
     if _agent is None:
-        from ...agents.test_schedule_agent import TestScheduleAgent
+        from agents.test_schedule_agent import TestScheduleAgent
         from qwenpaw.constant import WORKING_DIR
         _agent = TestScheduleAgent(WORKING_DIR)
     return _agent

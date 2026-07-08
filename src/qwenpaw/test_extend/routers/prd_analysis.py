@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
-"""Story Management API routes (extended on /api/test/ prefix)."""
+"""PRD Analysis API routes (extended on /api/test/ prefix)."""
 
 from fastapi import APIRouter
 
 router = APIRouter()
 
 
+@router.post("/parse")
+async def parse_prd(body: dict):
+    from agents.prd_parse_agent import PrdParseAgent
+    from qwenpaw.constant import WORKING_DIR
+    agent = PrdParseAgent(str(WORKING_DIR))
+    return await agent.parse_document(
+        file_path=body["file_path"],
+        iteration_id=body.get("iteration_id", ""),
+        file_content=body.get("file_content", ""),
+    )
+
+
 @router.post("/story/generate")
 async def generate_stories(body: dict):
-    from ..mcp_tools.story_generator import generate_stories_tool
+    from mcp_tools.story_generator import generate_stories_tool
     return await generate_stories_tool(
         parsed_prd=body["parsed_prd"],
         iteration_id=body["iteration_id"],
@@ -17,8 +29,8 @@ async def generate_stories(body: dict):
 
 @router.get("/story/{story_id}")
 async def get_story(story_id: str, iteration_id: str = ""):
-    from ..storage.paths import get_story_dir
-    from ..common.utils import read_json_file
+    from storage.paths import get_story_dir
+    from common.utils import read_json_file
     from qwenpaw.constant import WORKING_DIR
     story_dir = get_story_dir(WORKING_DIR, iteration_id)
     f = story_dir / f"{story_id}.json"
@@ -28,8 +40,8 @@ async def get_story(story_id: str, iteration_id: str = ""):
 
 @router.put("/story/{story_id}")
 async def update_story(story_id: str, body: dict):
-    from ..storage.paths import get_story_dir
-    from ..common.utils import write_json_file
+    from storage.paths import get_story_dir
+    from common.utils import write_json_file
     from qwenpaw.constant import WORKING_DIR
     story_dir = get_story_dir(WORKING_DIR, body.get("iteration_id", ""))
     story_dir.mkdir(parents=True, exist_ok=True)
@@ -39,7 +51,7 @@ async def update_story(story_id: str, body: dict):
 
 @router.post("/defect/submit")
 async def submit_defect(body: dict):
-    from ..mcp_tools.defect_sync import submit_defect_tool
+    from mcp_tools.defect_sync import submit_defect_tool
     return await submit_defect_tool(
         case_id=body["case_id"],
         iteration_id=body.get("iteration_id", ""),

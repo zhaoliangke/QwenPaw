@@ -180,6 +180,40 @@ if _HAS_SQLALCHEMY:
             Index("idx_knowledge_type", "doc_type"),
         )
 
+    class ProjectModel(Base):
+        __tablename__ = "test_projects"
+
+        id = Column(String(64), primary_key=True)
+        name = Column(String(256), nullable=False, index=True)
+        target_url = Column(String(1024), nullable=False)
+        description = Column(Text, nullable=True)
+        env = Column(String(32), default="test", index=True)
+        tags = Column(JSON, default=list)
+        owner = Column(String(128), default="")
+        is_active = Column(Boolean, default=True)
+        created_at = Column(DateTime, default=datetime.utcnow)
+        updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+        __table_args__ = (
+            Index("idx_project_env", "env"),
+            Index("idx_project_active", "is_active"),
+        )
+
+    class ElementMapModel(Base):
+        __tablename__ = "test_element_maps"
+
+        id = Column(String(64), primary_key=True)
+        project_id = Column(String(64), ForeignKey("test_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+        page_name = Column(String(256), nullable=False)
+        mapping = Column(JSON, default=dict)
+        created_at = Column(DateTime, default=datetime.utcnow)
+        updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+        __table_args__ = (
+            Index("idx_em_project", "project_id"),
+            Index("idx_em_page", "page_name"),
+        )
+
 else:
     Base = type("Base", (), {"metadata": type("Meta", (), {"tables": {}, "create_all": lambda self, bind: None})()})()
 
@@ -190,3 +224,5 @@ else:
     class ReportModel: pass
     class TraceRecordModel: pass
     class KnowledgeDocumentModel: pass
+    class ProjectModel: pass
+    class ElementMapModel: pass

@@ -11,7 +11,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-router = APIRouter(prefix="/api/test/defect", tags=["Defect Sync"])
+router = APIRouter(tags=["Defect Sync"])
 
 
 class DefectSubmitRequest(BaseModel):
@@ -50,7 +50,7 @@ class DefectStatusResponse(BaseModel):
 @router.post("/submit", response_model=DefectSubmitResponse)
 async def submit_defect(req: DefectSubmitRequest):
     try:
-        from ..mcp_tools.defect_sync import submit_defect as submit_tool
+        from mcp_tools.defect_sync import submit_defect as submit_tool
         result = submit_tool(
             failure_summary=req.failure_summary,
             steps=req.steps,
@@ -77,7 +77,7 @@ async def submit_defect(req: DefectSubmitRequest):
 @router.post("/status", response_model=DefectStatusResponse)
 async def sync_defect_status(req: DefectStatusRequest):
     try:
-        from ..mcp_tools.defect_sync import sync_defect_status as sync_tool
+        from mcp_tools.defect_sync import sync_defect_status as sync_tool
         result = sync_tool(
             defect_id=req.defect_id,
             target_system=req.target_system,

@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  Card, Table, Button, Modal, Form, Input, DatePicker, Select,
+  Card, Table, Button, Modal, Form, Input, DatePicker,
   Tag, Space, message, Popconfirm,
 } from "antd";
 import {
   PlusOutlined, ReloadOutlined, CameraOutlined,
-  DiffOutlined, SyncOutlined, ScheduleOutlined,
+  DiffOutlined, SyncOutlined,
 } from "@ant-design/icons";
-import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 

@@ -1,12 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
-  Card, Button, Table, Space, message, Progress, InputNumber, Tag, Collapse,
+  Progress, Card, Button, Table, Tag, Space,
+  message, InputNumber,
 } from "antd";
 import {
-  ThunderboltOutlined, ReloadOutlined, PlayCircleOutlined,
-  CheckCircleOutlined, CloseCircleOutlined,
+  ThunderboltOutlined, CheckCircleOutlined, CloseCircleOutlined, ReloadOutlined,
 } from "@ant-design/icons";
-
 export default function TestExecPage() {
   const [runs, setRuns] = useState<any[]>([]);
   const [activeRun, setActiveRun] = useState<any>(null);
@@ -42,14 +41,14 @@ export default function TestExecPage() {
   const columns = [
     { title: "Run ID", dataIndex: "id", key: "id", width: 200 },
     { title: "环境", dataIndex: "environment", key: "environment", width: 100 },
-    { title: "用例数", key: "cases", width: 100, render: (_: unknown, r: any) => r.case_ids?.length || 0 },
+    { title: "用例数", key: "cases", width: 100, render: (_: unknown, _r: any) => _r.case_ids?.length || 0 },
     {
       title: "状态", dataIndex: "status", key: "status", width: 100,
       render: (s: string) => <Tag color={s === "completed" ? "green" : "processing"}>{s}</Tag>,
     },
     {
       title: "操作", key: "actions", width: 150,
-      render: (_: unknown, r: any) => (
+      render: (_: unknown, _r: any) => (
         <Space size="small">
           <Button size="small" icon={<ReloadOutlined />} onClick={handleRefresh}>刷新</Button>
         </Space>

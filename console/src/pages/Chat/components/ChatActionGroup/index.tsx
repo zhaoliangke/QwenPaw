@@ -3,9 +3,10 @@ import React from "react";
 import { IconButton } from "@agentscope-ai/design";
 import { SparkHistoryLine, SparkNewChatFill } from "@agentscope-ai/icons";
 import {
-  ExpandAltOutlined,
   CompressOutlined,
+  ExpandAltOutlined,
   MoreOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { Dropdown, Flex, Tooltip } from "antd";
@@ -20,6 +21,10 @@ interface ChatActionGroupProps {
   historyOpen?: boolean;
   isWideMode?: boolean;
   onToggleWideMode?: () => void;
+  /** Callback to toggle the workflow panel */
+  onToggleWorkflow?: () => void;
+  /** Whether the workflow panel is currently visible */
+  workflowOpen?: boolean;
 }
 
 const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
@@ -27,6 +32,8 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
   historyOpen = false,
   isWideMode = false,
   onToggleWideMode,
+  onToggleWorkflow,
+  workflowOpen = false,
 }) => {
   const { t } = useTranslation();
 
@@ -36,7 +43,7 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
   // mobile. This saves space on phones while keeping actions visible on desktop.
   const isCompact = useIsMobile();
 
-  // Build "more" dropdown items for compact mode: History, WideMode.
+  // Build "more" dropdown items for compact mode: History, WideMode, Workflow.
   const moreItems: MenuProps["items"] = [];
   if (onToggleHistory) {
     moreItems.push({
@@ -62,6 +69,26 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
       onClick: () => onToggleWideMode(),
     });
   }
+  if (onToggleWorkflow) {
+    moreItems.push({
+      key: "workflow",
+      icon: (
+        <OrderedListOutlined
+          style={
+            workflowOpen
+              ? { color: "var(--color-primary, #ff9d4d)" }
+              : undefined
+          }
+        />
+      ),
+      label: (
+        <div style={{ textAlign: "center" }}>
+          {t("chat.workflowPanelTooltip")}
+        </div>
+      ),
+      onClick: () => onToggleWorkflow(),
+    });
+  }
 
   return (
     <Flex gap={8} align="center">
@@ -74,7 +101,7 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
         />
       </Tooltip>
 
-      {/* History + WideMode: inline when NOT compact */}
+      {/* History + Workflow + WideMode: inline when NOT compact */}
       {!isCompact && onToggleHistory && (
         <Tooltip title={t("chat.chatHistoryTooltip")} mouseEnterDelay={0.5}>
           <IconButton
@@ -86,6 +113,20 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
                 : undefined
             }
             onClick={onToggleHistory}
+          />
+        </Tooltip>
+      )}
+      {!isCompact && onToggleWorkflow && (
+        <Tooltip title={t("chat.workflowPanelTooltip")} mouseEnterDelay={0.5}>
+          <IconButton
+            bordered={false}
+            icon={<OrderedListOutlined />}
+            style={
+              workflowOpen
+                ? { color: "var(--color-primary, #ff9d4d)" }
+                : undefined
+            }
+            onClick={onToggleWorkflow}
           />
         </Tooltip>
       )}
@@ -104,7 +145,7 @@ const ChatActionGroup: React.FC<ChatActionGroupProps> = ({
         </Tooltip>
       )}
 
-      {/* Compact mode: collapse History/WideMode into more dropdown */}
+      {/* Compact mode: collapse History/WideMode/Workflow into more dropdown */}
       {isCompact && moreItems.length > 0 && (
         <Dropdown
           menu={{ items: moreItems }}

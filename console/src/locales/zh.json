@@ -2007,6 +2007,7 @@
     "chatHistoryTooltip": "聊天历史",
     "wideModeTooltip": "宽屏模式",
     "normalModeTooltip": "正常模式",
+    "workflowPanelTooltip": "测试工作流",
     "allChats": "全部聊天",
     "createNewChat": "创建新聊天",
     "pinDrawer": "固定",

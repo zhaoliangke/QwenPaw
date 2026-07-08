@@ -1,0 +1,15 @@
+{
+  "id": "14c44144-7584-4b86-8f60-b1fb1975a57e",
+  "title": "需求分析 [iter_test_001]",
+  "content": "# 需求分析\n\n- **迭代 ID**: iter_test_001\n- **归档时间**: 2026-07-07 13:57 UTC\n\n## 需求解析摘要\n\n- 功能模块数: **4**\n- 业务流程数: **2**\n- 验证规则数: **8**\n- 异常流数: **1**\n- 非功能性需求数: **2**\n- 风险项数: **3**",
+  "product_line": "",
+  "doc_type": "prd_summary",
+  "tags": [
+    "requirement",
+    "iter_test_001",
+    "prd_summary"
+  ],
+  "iteration_id": "iter_test_001",
+  "file_path": null,
+  "created_at": "2026-07-07 13:57:50.764484"
+}

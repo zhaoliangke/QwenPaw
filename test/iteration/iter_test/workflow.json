@@ -1,0 +1,62 @@
+{
+  "iteration_id": "iter_test",
+  "chat_session_id": null,
+  "steps": [
+    {
+      "step_id": "requirement",
+      "name": "需求分析",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "step_id": "functional",
+      "name": "生成功能用例",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "step_id": "ui-auto",
+      "name": "生成UI用例",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "step_id": "review",
+      "name": "用例评审",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "step_id": "execution",
+      "name": "自动测试执行",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    },
+    {
+      "step_id": "report",
+      "name": "端到端测试报告",
+      "status": "pending",
+      "result_summary": {},
+      "error": null,
+      "started_at": null,
+      "completed_at": null
+    }
+  ],
+  "overall_progress": 0,
+  "updated_at": "2026-07-07 13:53:23.525510"
+}

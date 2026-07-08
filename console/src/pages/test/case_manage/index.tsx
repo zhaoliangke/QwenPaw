@@ -1,12 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
-  Card, Button, Table, Tag, Space, message, Select, Progress, Modal, Typography,
+  Progress, Card, Button, Table, Tag, Space,
+  message, Typography,
 } from "antd";
 import {
   PlusOutlined, ExportOutlined, SearchOutlined,
-  PlayCircleOutlined,
 } from "@ant-design/icons";
-
 const { Text } = Typography;
 
 const CASE_DIMENSIONS = ["functional", "boundary", "exception", "security", "ui"];
@@ -34,7 +33,7 @@ export default function CaseManagePage() {
     setGenerating(false);
     message.success(`生成了 ${data.count || 0} 个用例`);
 
-    const covResp = await fetch("/api/test/case/generate", {
+    await fetch("/api/test/case/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ story_id: "current", iteration_id: "current" }),

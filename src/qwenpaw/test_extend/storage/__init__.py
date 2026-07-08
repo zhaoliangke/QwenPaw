@@ -13,7 +13,7 @@ Exports:
 """
 
 from .base_store import BaseStore
-from ..infra.storage_factory import StorageFactory
+from infra.storage_factory import StorageFactory
 
 __all__ = [
     "BaseStore",

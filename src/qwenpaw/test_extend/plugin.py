@@ -7,11 +7,16 @@ any kernel code.
 """
 
 import logging
+import sys
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 _PLUGIN_DIR = Path(__file__).resolve().parent
+
+# Ensure plugin directory is in sys.path for absolute imports
+if str(_PLUGIN_DIR) not in sys.path:
+    sys.path.insert(0, str(_PLUGIN_DIR))
 
 
 class TestPlatformPlugin:
@@ -56,13 +61,18 @@ class TestPlatformPlugin:
         logger.info("Test Platform plugin registered successfully")
 
     async def _on_startup(self):
-        """Initialize test agents and storage structure on app startup."""
+        """Initialize test agents, storage, and infrastructure on app startup."""
+        from .infra import init_infra
         from .agents import register_test_agents
+
+        await init_infra(workspace_dir="/root/.qwenpaw/workspaces/default")
         await register_test_agents()
-        logger.info("Test Platform agents and storage initialized")
+        logger.info("Test Platform agents and infrastructure initialized")
 
     async def _on_shutdown(self):
         """Clean up test platform resources on app shutdown."""
+        from .infra import close_infra
+        await close_infra()
         logger.info("Test Platform shutdown complete")
 
 

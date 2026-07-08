@@ -16,7 +16,7 @@ _agent = None
 def _get_agent():
     global _agent
     if _agent is None:
-        from ...agents.iteration_agent import IterationAgent
+        from agents.iteration_agent import IterationAgent
         from qwenpaw.constant import WORKING_DIR
         _agent = IterationAgent(WORKING_DIR)
     return _agent

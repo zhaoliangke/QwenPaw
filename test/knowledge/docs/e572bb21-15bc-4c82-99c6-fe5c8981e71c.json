@@ -1,0 +1,15 @@
+{
+  "id": "e572bb21-15bc-4c82-99c6-fe5c8981e71c",
+  "title": "生成功能用例 [iter_test_001]",
+  "content": "# 生成功能用例\n\n- **迭代 ID**: iter_test_001\n- **归档时间**: 2026-07-07 13:58 UTC\n\n## 功能用例生成摘要\n\n- User Story 数: **8**\n- 测试用例数: **24**\n- 需求覆盖率: **85%**",
+  "product_line": "",
+  "doc_type": "case_pattern",
+  "tags": [
+    "functional",
+    "iter_test_001",
+    "case_pattern"
+  ],
+  "iteration_id": "iter_test_001",
+  "file_path": null,
+  "created_at": "2026-07-07 13:58:00.922195"
+}

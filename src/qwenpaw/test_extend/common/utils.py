@@ -2,6 +2,7 @@
 """Common utilities for the test platform extension."""
 
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,13 @@ def read_json_file(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _json_default_serializer(obj: Any) -> str:
+    """Custom JSON serializer that converts datetime to ISO format."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    return str(obj)
+
+
 def write_json_file(path: Path, data: dict[str, Any]) -> None:
     """Write data to a JSON file atomically.
 
@@ -34,7 +42,7 @@ def write_json_file(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(path.suffix + ".tmp")
     tmp_path.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2, default=str),
+        json.dumps(data, ensure_ascii=False, indent=2, default=_json_default_serializer),
         encoding="utf-8",
     )
     tmp_path.replace(path)

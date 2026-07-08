@@ -32,6 +32,8 @@ import { useChatAnywhereInput } from "@agentscope-ai/chat";
 import styles from "./index.module.less";
 import { IconButton } from "@agentscope-ai/design";
 import ChatActionGroup from "./components/ChatActionGroup";
+import { WorkflowPanel } from "./components/WorkflowPanel";
+import { getStepIdForTool } from "./components/WorkflowPanel/workflowNotify";
 import ChatSessionDrawer from "./components/ChatSessionDrawer";
 import { useSidebarModeStore } from "../../stores/sidebarModeStore";
 import TurnUsageAction from "./components/TurnUsageAction";
@@ -1352,6 +1354,162 @@ export default function ChatPage() {
       return next;
     });
   }, []);
+
+  // Right-side workflow panel state
+  const [workflowPanelOpen, setWorkflowPanelOpen] = useState(() => {
+    try {
+      return localStorage.getItem("workflow-panel-visible") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [workflowIterationId, setWorkflowIterationId] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get("iterationId") || "";
+    } catch {
+      return "";
+    }
+  });
+  const workflowToolCallIdsRef = useRef<Set<string>>(new Set());
+
+  // Monitor chat messages for tool_call results and notify workflow panel
+  useEffect(() => {
+    if (!workflowPanelOpen) return;
+    const interval = setInterval(() => {
+      try {
+        const messages = chatRef.current?.messages?.getMessages?.();
+        if (!Array.isArray(messages)) return;
+        for (const msg of messages) {
+          const msgRole = msg.role ?? msg.type;
+          const toolCallId = msg.tool_call_id ?? msg.id;
+
+          // Detect tool_call completion (role === "tool")
+          if (toolCallId && msgRole === "tool") {
+            if (workflowToolCallIdsRef.current.has(toolCallId)) continue;
+            workflowToolCallIdsRef.current.add(toolCallId);
+            const toolName = msg.name || msg.tool_name || "";
+            const stepId = toolName ? getStepIdForTool(toolName) : null;
+            if (!stepId) continue;
+            let resultSummary: Record<string, unknown> = {};
+            let artifact: unknown = undefined;
+            try {
+              const content = typeof msg.content === "string" ? JSON.parse(msg.content) : msg.content;
+              if (content && typeof content === "object") {
+                resultSummary = content;
+                artifact = content;
+              } else if (typeof content === "string") {
+                artifact = content;
+              }
+            } catch {
+              if (msg.content) artifact = msg.content;
+            }
+            const hasError = msg.status === "error" || msg.is_error;
+            window.dispatchEvent(
+              new CustomEvent("workflow-step-update", {
+                detail: {
+                  step_id: stepId,
+                  status: hasError ? "error" : "completed",
+                  result_summary: resultSummary,
+                  artifact: artifact,
+                  error: hasError ? (typeof msg.content === "string" ? msg.content : "Tool execution failed") : undefined,
+                  iteration_id: workflowIterationId,
+                },
+              })
+            );
+          }
+
+          // Detect tool_call initiation (role === "assistant" with tool_calls array)
+          if (msgRole === "assistant" && Array.isArray(msg.tool_calls)) {
+            for (const tc of msg.tool_calls) {
+              const tcId = tc.id || tc.tool_call_id;
+              const fnName = tc.function?.name || tc.name || "";
+              const stepId = fnName ? getStepIdForTool(fnName) : null;
+              if (tcId && stepId && !workflowToolCallIdsRef.current.has(tcId)) {
+                workflowToolCallIdsRef.current.add(tcId);
+                window.dispatchEvent(
+                  new CustomEvent("workflow-step-update", {
+                    detail: {
+                      step_id: stepId,
+                      status: "running",
+                      iteration_id: workflowIterationId,
+                    },
+                  })
+                );
+              }
+            }
+          }
+        }
+      } catch {}
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [workflowPanelOpen, workflowIterationId]);
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      try {
+        const id = new URLSearchParams(window.location.search).get("iterationId") || "";
+        setWorkflowIterationId(id);
+      } catch {}
+    };
+    window.addEventListener("popstate", handleUrlChange);
+    return () => window.removeEventListener("popstate", handleUrlChange);
+  }, []);
+
+  useEffect(() => {
+    const handleWorkflowStart = () => {
+      if (!workflowPanelOpen) {
+        setWorkflowPanelOpen(true);
+      }
+      setTimeout(() => {
+        chatRef.current?.input.submit({
+          query: "开始端到端测试，帮我分析 PRD、生成测试用例、执行自动化测试并生成报告",
+          fileList: [],
+        });
+      }, 300);
+    };
+    window.addEventListener("workflow-start", handleWorkflowStart);
+    return () => window.removeEventListener("workflow-start", handleWorkflowStart);
+  }, [workflowPanelOpen]);
+
+  useEffect(() => {
+    const handleQuickAction = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail?.prompt) return;
+      if (!workflowPanelOpen) setWorkflowPanelOpen(true);
+      setTimeout(() => {
+        chatRef.current?.input.submit({
+          query: detail.prompt,
+          fileList: [],
+        });
+      }, 200);
+    };
+    window.addEventListener("workflow-quick-action", handleQuickAction);
+    return () => window.removeEventListener("workflow-quick-action", handleQuickAction);
+  }, [workflowPanelOpen]);
+
+  // Auto-open workflow panel when iterationId is in URL
+  useEffect(() => {
+    if (workflowIterationId && !workflowPanelOpen) {
+      setWorkflowPanelOpen(true);
+    }
+  }, [workflowIterationId]);
+
+  const toggleWorkflowPanel = useCallback(() => {
+    setWorkflowPanelOpen((prev) => {
+      const next = !prev;
+      try {
+        if (next) {
+          localStorage.setItem("workflow-panel-visible", "true");
+        } else {
+          localStorage.removeItem("workflow-panel-visible");
+        }
+      } catch {
+        // storage unavailable
+      }
+      return next;
+    });
+  }, []);
+
   const [chatSkills, setChatSkills] = useState<SkillSpec[]>([]);
   const consoleSkills = useMemo(
     () => chatSkills.filter(isSkillAvailableInConsole),
@@ -2713,6 +2871,8 @@ export default function ChatPage() {
               historyOpen={effectiveIsFullMode ? historyPanelOpen : false}
               isWideMode={isWideMode}
               onToggleWideMode={toggleWideMode}
+              onToggleWorkflow={toggleWorkflowPanel}
+              workflowOpen={workflowPanelOpen}
             />
             {pluginRightHeader}
           </>
@@ -3218,6 +3378,23 @@ export default function ChatPage() {
             </>
           )}
         </>
+      )}
+
+      {/* Right-side workflow panel */}
+      {workflowPanelOpen && !isMobile && (
+        <WorkflowPanel
+          open={workflowPanelOpen}
+          onClose={toggleWorkflowPanel}
+          embedded
+          iterationId={workflowIterationId}
+        />
+      )}
+      {workflowPanelOpen && isMobile && (
+        <WorkflowPanel
+          open={workflowPanelOpen}
+          onClose={toggleWorkflowPanel}
+          iterationId={workflowIterationId}
+        />
       )}
     </div>
   );

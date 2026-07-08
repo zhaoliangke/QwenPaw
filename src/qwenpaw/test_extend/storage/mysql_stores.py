@@ -9,19 +9,40 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from ..infra.db_session import get_db_session
-from ..infra.db_models import (
-    IterationModel, StoryModel, TestCaseModel, TestRunModel,
-    ReportModel, TraceRecordModel, KnowledgeDocumentModel,
-)
-from ..models.iteration import Iteration
-from ..models.story import Story
-from ..models.test_case import TestCase
-from ..models.execution import TestRun
-from ..models.report import TestReport
-from ..models.traceability import TraceRecord
-from ..models.knowledge import KnowledgeDocument
-from ..common.trace_id import generate_iteration_id, generate_story_id
+try:
+    from ..infra.db_session import get_db_session
+    from ..infra.db_models import (
+        IterationModel, StoryModel, TestCaseModel, TestRunModel,
+        ReportModel, TraceRecordModel, KnowledgeDocumentModel,
+        ProjectModel, ElementMapModel,
+    )
+    from ..models.iteration import Iteration
+    from ..models.story import Story
+    from ..models.test_case import TestCase
+    from ..models.execution import TestRun
+    from ..models.report import TestReport
+    from ..models.traceability import TraceRecord
+    from ..models.knowledge import KnowledgeDocument
+    from ..models.project import Project
+    from ..models.element_map import ElementMap
+    from ..common.trace_id import generate_iteration_id, generate_story_id, generate_trace_id
+except ImportError:
+    from infra.db_session import get_db_session
+    from infra.db_models import (
+        IterationModel, StoryModel, TestCaseModel, TestRunModel,
+        ReportModel, TraceRecordModel, KnowledgeDocumentModel,
+        ProjectModel, ElementMapModel,
+    )
+    from models.iteration import Iteration
+    from models.story import Story
+    from models.test_case import TestCase
+    from models.execution import TestRun
+    from models.report import TestReport
+    from models.traceability import TraceRecord
+    from models.knowledge import KnowledgeDocument
+    from models.project import Project
+    from models.element_map import ElementMap
+    from common.trace_id import generate_iteration_id, generate_story_id, generate_trace_id
 from .base_store import BaseStore
 
 logger = logging.getLogger(__name__)
@@ -626,6 +647,149 @@ class MySQLKnowledgeStore(BaseStore[KnowledgeDocument]):
                 await session.commit()
                 return True
             return False
+
+    async def exists(self, item_id: str) -> bool:
+        return await self.get(item_id) is not None
+
+
+class MySQLProjectStore(BaseStore[Project]):
+    async def create(self, item: Project) -> Project:
+        async for session in get_db_session():
+            if session is None:
+                raise RuntimeError("MySQL not initialized")
+            model = ProjectModel(
+                id=item.id, name=item.name, target_url=item.target_url,
+                description=item.description, env=item.env, tags=item.tags,
+                owner=item.owner, is_active=item.is_active,
+            )
+            session.add(model)
+            await session.commit()
+            return item
+
+    async def get(self, item_id: str) -> Optional[Project]:
+        async for session in get_db_session():
+            if session is None:
+                return None
+            from sqlalchemy import select
+            result = await session.execute(select(ProjectModel).where(ProjectModel.id == item_id))
+            model = result.scalar_one_or_none()
+            if model:
+                return Project(**_to_dict(model))
+            return None
+
+    async def update(self, item: Project) -> Project:
+        async for session in get_db_session():
+            if session is None:
+                raise RuntimeError("MySQL not initialized")
+            from sqlalchemy import select
+            result = await session.execute(select(ProjectModel).where(ProjectModel.id == item.id))
+            model = result.scalar_one_or_none()
+            if not model:
+                raise ValueError(f"Project {item.id} not found")
+            for key, val in item.model_dump(exclude={"created_at", "updated_at"}).items():
+                setattr(model, key, val)
+            model.updated_at = datetime.utcnow()
+            await session.commit()
+            return item
+
+    async def delete(self, item_id: str) -> bool:
+        async for session in get_db_session():
+            if session is None:
+                return False
+            from sqlalchemy import select
+            result = await session.execute(select(ProjectModel).where(ProjectModel.id == item_id))
+            model = result.scalar_one_or_none()
+            if model:
+                await session.delete(model)
+                await session.commit()
+                return True
+            return False
+
+    async def list_all(self, **filters) -> list[Project]:
+        async for session in get_db_session():
+            if session is None:
+                return []
+            from sqlalchemy import select
+            query = select(ProjectModel)
+            if "is_active" in filters:
+                query = query.where(ProjectModel.is_active == filters["is_active"])
+            if "env" in filters:
+                query = query.where(ProjectModel.env == filters["env"])
+            if "tags" in filters:
+                query = query.where(ProjectModel.tags.contains(filters["tags"]))
+            query = query.order_by(ProjectModel.created_at.desc())
+            result = await session.execute(query)
+            return [Project(**_to_dict(row)) for row in result.scalars()]
+
+    async def exists(self, item_id: str) -> bool:
+        return await self.get(item_id) is not None
+
+
+class MySQLElementMapStore(BaseStore[ElementMap]):
+    async def create(self, item: ElementMap) -> ElementMap:
+        async for session in get_db_session():
+            if session is None:
+                raise RuntimeError("MySQL not initialized")
+            model = ElementMapModel(
+                id=item.id, project_id=item.project_id,
+                page_name=item.page_name, mapping=item.mapping,
+            )
+            session.add(model)
+            await session.commit()
+            return item
+
+    async def get(self, item_id: str) -> Optional[ElementMap]:
+        async for session in get_db_session():
+            if session is None:
+                return None
+            from sqlalchemy import select
+            result = await session.execute(select(ElementMapModel).where(ElementMapModel.id == item_id))
+            model = result.scalar_one_or_none()
+            if model:
+                return ElementMap(**_to_dict(model))
+            return None
+
+    async def update(self, item: ElementMap) -> ElementMap:
+        async for session in get_db_session():
+            if session is None:
+                raise RuntimeError("MySQL not initialized")
+            from sqlalchemy import select
+            result = await session.execute(select(ElementMapModel).where(ElementMapModel.id == item.id))
+            model = result.scalar_one_or_none()
+            if not model:
+                raise ValueError(f"ElementMap {item.id} not found")
+            for key, val in item.model_dump(exclude={"created_at", "updated_at"}).items():
+                setattr(model, key, val)
+            model.updated_at = datetime.utcnow()
+            await session.commit()
+            return item
+
+    async def delete(self, item_id: str) -> bool:
+        async for session in get_db_session():
+            if session is None:
+                return False
+            from sqlalchemy import select
+            result = await session.execute(select(ElementMapModel).where(ElementMapModel.id == item_id))
+            model = result.scalar_one_or_none()
+            if model:
+                await session.delete(model)
+                await session.commit()
+                return True
+            return False
+
+    async def list_all(self, **filters) -> list[ElementMap]:
+        async for session in get_db_session():
+            if session is None:
+                return []
+            from sqlalchemy import select
+            query = select(ElementMapModel)
+            if "project_id" in filters:
+                query = query.where(ElementMapModel.project_id == filters["project_id"])
+            if "page_name" in filters:
+                query = query.where(ElementMapModel.page_name == filters["page_name"])
+            query = query.order_by(ElementMapModel.created_at.desc())
+            result = await session.execute(query)
+            return [ElementMap(**_to_dict(row)) for row in result.scalars()]
 
     async def exists(self, item_id: str) -> bool:
         return await self.get(item_id) is not None

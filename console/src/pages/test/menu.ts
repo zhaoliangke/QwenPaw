@@ -23,6 +23,20 @@ export const TEST_MENU_ITEMS: MenuItem[] = [
     route: "test.iteration",
   },
   {
+    id: "test.project",
+    label: "项目管理",
+    location: "primary.settings",
+    parentId: "test-group",
+    route: "test.project",
+  },
+  {
+    id: "test.element_map",
+    label: "元素映射",
+    location: "primary.settings",
+    parentId: "test-group",
+    route: "test.element_map",
+  },
+  {
     id: "test.prd_analysis",
     label: "需求解析",
     location: "primary.settings",

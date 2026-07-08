@@ -9,9 +9,9 @@ import json
 import logging
 from pathlib import Path
 
-from ..storage.paths import get_story_dir
-from ..models.story import Story, AcceptanceCriteria
-from ..common.trace_id import generate_story_id
+from storage.paths import get_story_dir
+from models.story import Story, AcceptanceCriteria
+from common.trace_id import generate_story_id
 
 logger = logging.getLogger(__name__)
 

@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 
-from ..storage.paths import (
+from storage.paths import (
     get_knowledge_docs_dir,
     get_iteration_dir,
 )
@@ -75,7 +75,7 @@ class KnowledgeArchAgent:
         """
         # Priority 1: ReMe vector search
         try:
-            from ..infra.reme_knowledge import (
+            from infra.reme_knowledge import (
                 is_knowledge_base_ready,
                 search_test_knowledge,
             )
@@ -123,7 +123,7 @@ class KnowledgeArchAgent:
 
         # Index in ReMe
         try:
-            from ..infra.reme_knowledge import add_knowledge_document
+            from infra.reme_knowledge import add_knowledge_document
             content = src.read_text(encoding="utf-8", errors="ignore")[:50000]
             await add_knowledge_document(
                 title=src.stem,
@@ -199,7 +199,7 @@ class KnowledgeArchAgent:
     async def _index_document(self, file_path: Path, doc_type: str, iteration_id: str):
         """Add a single file to the ReMe vector index."""
         try:
-            from ..infra.reme_knowledge import add_knowledge_document
+            from infra.reme_knowledge import add_knowledge_document
             if file_path.suffix == ".json":
                 data = json.loads(file_path.read_text(encoding="utf-8"))
                 content = json.dumps(data, ensure_ascii=False, indent=2)

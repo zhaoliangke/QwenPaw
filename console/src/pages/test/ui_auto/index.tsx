@@ -1,6 +1,6 @@
-import { useState } from "react";
+import {useState} from "react";
 import {
-  Card, Button, Table, Space, message, Select, Input, Tree, Splitter,
+  Card, Button, Table, Space, message, Input,
 } from "antd";
 import {
   PlayCircleOutlined, BugOutlined, SaveOutlined,
@@ -49,7 +49,7 @@ export default function UIAutoPage() {
     { title: "步骤数", dataIndex: "steps_count", key: "steps_count", width: 80 },
     {
       title: "操作", key: "actions", width: 200,
-      render: (_: unknown, r: any) => (
+      render: (_: unknown, _r: any) => (
         <Space size="small">
           <Button size="small" icon={<BugOutlined />} loading={debugging} onClick={handleDebug}>调试</Button>
           <Button size="small" icon={<PlayCircleOutlined />}>执行</Button>

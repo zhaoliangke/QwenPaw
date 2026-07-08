@@ -8,7 +8,7 @@ from pathlib import Path
 from datetime import datetime
 
 from .paths import get_iteration_dir, get_snapshot_dir
-from ..common.trace_id import generate_snapshot_id
+from common.trace_id import generate_snapshot_id
 
 logger = logging.getLogger(__name__)
 

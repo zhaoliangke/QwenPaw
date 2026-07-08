@@ -8,9 +8,9 @@ and pushes notifications via the platform's native channels.
 import logging
 from pathlib import Path
 
-from ..storage.paths import get_report_dir, get_exec_log_dir
-from ..models.report import TestReport, FailureCategory, FailureItem
-from ..common.trace_id import generate_report_id
+from storage.paths import get_report_dir, get_exec_log_dir
+from models.report import TestReport, FailureCategory, FailureItem
+from common.trace_id import generate_report_id
 
 logger = logging.getLogger(__name__)
 

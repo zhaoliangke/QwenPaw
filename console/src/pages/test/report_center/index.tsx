@@ -1,12 +1,11 @@
 import { useState } from "react";
 import {
-  Card, Button, Table, Space, message, Tag, Progress, Statistic, Row, Col,
+  Progress, Card, Button, Table, Tag, Space,
+  message, Row, Col, Statistic,
 } from "antd";
 import {
-  BarChartOutlined, SendOutlined, DownloadOutlined,
-  FileProtectOutlined,
+  DownloadOutlined, SendOutlined, BarChartOutlined, FileProtectOutlined,
 } from "@ant-design/icons";
-
 export default function ReportCenterPage() {
   const [reports, setReports] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);

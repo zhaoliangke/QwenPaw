@@ -12,9 +12,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, Optional
 
-from ..storage.paths import get_exec_log_dir
-from ..models.execution import TestRun, TestCaseResult, ExecutionStatus
-from ..common.trace_id import generate_run_id
+from storage.paths import get_exec_log_dir
+from models.execution import TestRun, TestCaseResult, ExecutionStatus
+from common.trace_id import generate_run_id
 
 logger = logging.getLogger(__name__)
 

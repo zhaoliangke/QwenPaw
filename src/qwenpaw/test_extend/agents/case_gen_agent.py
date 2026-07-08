@@ -9,9 +9,9 @@ import json
 import logging
 from pathlib import Path
 
-from ..storage.paths import get_case_dir
-from ..models.test_case import TestCase, CaseType
-from ..common.trace_id import generate_case_id
+from storage.paths import get_case_dir
+from models.test_case import TestCase, CaseType
+from common.trace_id import generate_case_id
 
 logger = logging.getLogger(__name__)
 

@@ -2148,6 +2148,7 @@
     "chatHistoryTooltip": "Chat history",
     "wideModeTooltip": "Wide mode",
     "normalModeTooltip": "Normal mode",
+    "workflowPanelTooltip": "Test Workflow",
     "allChats": "All Chats",
     "createNewChat": "Create New Chat",
     "pinDrawer": "Pin",

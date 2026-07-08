@@ -11,7 +11,7 @@ _agent = None
 def _get_agent():
     global _agent
     if _agent is None:
-        from ...agents.report_agent import ReportAgent
+        from agents.report_agent import ReportAgent
         from qwenpaw.constant import WORKING_DIR
         _agent = ReportAgent(WORKING_DIR)
     return _agent

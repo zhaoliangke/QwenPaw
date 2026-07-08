@@ -10,7 +10,7 @@ and workspace conventions.
 from pathlib import Path
 
 
-def get_test_root(workspace_dir: Path) -> Path:
+def get_test_root(workspace_dir) -> Path:
     """Return the root directory for all test platform assets.
 
     Args:
@@ -20,7 +20,7 @@ def get_test_root(workspace_dir: Path) -> Path:
     Returns:
         Path to the test/ directory within the workspace.
     """
-    return workspace_dir / "test"
+    return Path(workspace_dir) / "test"
 
 
 def get_iteration_dir(workspace_dir: Path, iteration_id: str) -> Path:
@@ -66,6 +66,71 @@ def get_report_dir(workspace_dir: Path, iteration_id: str) -> Path:
     return get_iteration_dir(workspace_dir, iteration_id) / "report"
 
 
+def get_test_data_dir(workspace_dir: Path, iteration_id: str) -> Path:
+    """Return the directory where test data sets are stored."""
+    return get_iteration_dir(workspace_dir, iteration_id) / "test_data"
+
+
+def get_coverage_dir(workspace_dir: Path) -> Path:
+    """Return the directory where coverage reports are stored."""
+    return get_test_root(workspace_dir) / "coverage"
+
+
+def get_api_test_dir(workspace_dir: Path) -> Path:
+    """Return the directory where API test cases are stored."""
+    return get_test_root(workspace_dir) / "api_test"
+
+
+def get_env_dir(workspace_dir: Path) -> Path:
+    """Return the directory where environment configs are stored."""
+    return get_test_root(workspace_dir) / "environment"
+
+
+def get_case_version_dir(workspace_dir: Path) -> Path:
+    """Return the directory where case version snapshots are stored."""
+    return get_test_root(workspace_dir) / "case_version"
+
+
+def get_recording_dir(workspace_dir: Path) -> Path:
+    """Return the directory where video recordings and traces are stored."""
+    return get_test_root(workspace_dir) / "recording"
+
+
+def get_queue_dir(workspace_dir: Path) -> Path:
+    """Return the directory where execution queue jobs are stored."""
+    return get_test_root(workspace_dir) / "queue"
+
+
+def get_perf_dir(workspace_dir: Path) -> Path:
+    """Return the directory where performance test results are stored."""
+    return get_test_root(workspace_dir) / "performance"
+
+
+def get_collaboration_dir(workspace_dir: Path) -> Path:
+    """Return the directory where collaboration data (comments/assignments/audit) is stored."""
+    return get_test_root(workspace_dir) / "collaboration"
+
+
+def get_visual_diff_dir(workspace_dir: Path) -> Path:
+    """Return the directory where visual diff screenshots are stored."""
+    return get_test_root(workspace_dir) / "visual_diff"
+
+
+def get_ab_test_dir(workspace_dir: Path) -> Path:
+    """Return the directory where A/B test data is stored."""
+    return get_test_root(workspace_dir) / "ab_test"
+
+
+def get_chaos_dir(workspace_dir: Path) -> Path:
+    """Return the directory where chaos experiment data is stored."""
+    return get_test_root(workspace_dir) / "chaos"
+
+
+def get_analytics_dir(workspace_dir: Path) -> Path:
+    """Return the directory where analytics dashboards are stored."""
+    return get_test_root(workspace_dir) / "analytics"
+
+
 def get_snapshot_dir(workspace_dir: Path, iteration_id: str) -> Path:
     """Return the directory for iteration baseline snapshots."""
     return get_iteration_dir(workspace_dir, iteration_id) / "snapshot"
@@ -105,6 +170,18 @@ def ensure_test_directories(workspace_dir: Path):
         get_knowledge_dir(workspace_dir),
         get_knowledge_docs_dir(workspace_dir),
         get_vector_store_dir(workspace_dir),
+        get_coverage_dir(workspace_dir),
+        get_api_test_dir(workspace_dir),
+        get_env_dir(workspace_dir),
+        get_case_version_dir(workspace_dir),
+        get_recording_dir(workspace_dir),
+        get_queue_dir(workspace_dir),
+        get_perf_dir(workspace_dir),
+        get_collaboration_dir(workspace_dir),
+        get_visual_diff_dir(workspace_dir),
+        get_ab_test_dir(workspace_dir),
+        get_chaos_dir(workspace_dir),
+        get_analytics_dir(workspace_dir),
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)

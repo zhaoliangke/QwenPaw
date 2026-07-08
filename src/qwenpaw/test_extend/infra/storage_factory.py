@@ -32,50 +32,75 @@ class StorageFactory:
 
     def create_iteration_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLIterationStore
+            from storage.mysql_stores import MySQLIterationStore
             return MySQLIterationStore()
-        from ..storage.file_stores import FileIterationStore
+        from storage.file_stores import FileIterationStore
         return FileIterationStore(self._workspace_dir)
 
     def create_story_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLStoryStore
+            from storage.mysql_stores import MySQLStoryStore
             return MySQLStoryStore()
-        from ..storage.file_stores import FileStoryStore
+        from storage.file_stores import FileStoryStore
         return FileStoryStore(self._workspace_dir)
 
     def create_case_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLCaseStore
+            from storage.mysql_stores import MySQLCaseStore
             return MySQLCaseStore()
-        from ..storage.file_stores import FileCaseStore
+        from storage.file_stores import FileCaseStore
         return FileCaseStore(self._workspace_dir)
+
+    def create_project_store(self):
+        if self.use_mysql:
+            from storage.mysql_stores import MySQLProjectStore
+            return MySQLProjectStore()
+        from storage.file_stores import FileProjectStore
+        return FileProjectStore(self._workspace_dir)
+
+    def create_element_map_store(self):
+        if self.use_mysql:
+            from storage.mysql_stores import MySQLElementMapStore
+            return MySQLElementMapStore()
+        from storage.file_stores import FileElementMapStore
+        return FileElementMapStore(self._workspace_dir)
 
     def create_test_run_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLTestRunStore
+            from storage.mysql_stores import MySQLTestRunStore
             return MySQLTestRunStore()
-        from ..storage.file_stores import FileTestRunStore
+        from storage.file_stores import FileTestRunStore
         return FileTestRunStore(self._workspace_dir)
 
     def create_report_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLReportStore
+            from storage.mysql_stores import MySQLReportStore
             return MySQLReportStore()
-        from ..storage.file_stores import FileReportStore
+        from storage.file_stores import FileReportStore
         return FileReportStore(self._workspace_dir)
 
     def create_trace_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLTraceStore
+            from storage.mysql_stores import MySQLTraceStore
             return MySQLTraceStore()
-        from ..storage.file_stores import FileTraceStore
+        from storage.file_stores import FileTraceStore
         return FileTraceStore(self._workspace_dir)
 
     def create_knowledge_store(self):
         if self.use_mysql:
-            from ..storage.mysql_stores import MySQLKnowledgeStore
+            from storage.mysql_stores import MySQLKnowledgeStore
             return MySQLKnowledgeStore()
-        from ..storage.file_stores import FileKnowledgeStore
+        from storage.file_stores import FileKnowledgeStore
         return FileKnowledgeStore(self._workspace_dir)
+
+    def create_workflow_store(self):
+        """Create a workflow state store (file-based or MySQL)."""
+        if self.use_mysql:
+            try:
+                from storage.mysql_stores import MySQLWorkflowStore
+                return MySQLWorkflowStore()
+            except ImportError:
+                logger.warning("MySQLWorkflowStore not found, falling back to file-based")
+        from storage.file_stores import FileWorkflowStore
+        return FileWorkflowStore(self._workspace_dir)
 
